@@ -1,4 +1,4 @@
-package chat
+package main
 
 import (
 	"bufio"
@@ -10,13 +10,11 @@ import (
 func main() {
 
 	ln, err := net.Listen("tcp", "127.0.0.1:8080")
-
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	// we need channels for connection, dead connection, and message
-
+	// We need channels for connection, dead connection, and message
 	aconns := make(map[net.Conn]int)
 	conns := make(chan net.Conn)
 	dconns := make(chan net.Conn)
@@ -35,7 +33,6 @@ func main() {
 	}()
 
 	for {
-
 		select {
 		// read incoming connection
 		case conn := <-conns:
@@ -44,7 +41,6 @@ func main() {
 			i++
 
 			// Once we have the connection, start reading message from it
-
 			go func(conn net.Conn, i int) {
 
 				rd := bufio.NewReader(conn)
@@ -55,7 +51,6 @@ func main() {
 					}
 
 					msgs <- fmt.Sprintf("Client %v: %v", i, m)
-
 				}
 				// Done reading from it
 				dconns <- conn
@@ -63,15 +58,12 @@ func main() {
 
 		case msg := <-msgs:
 			// we have to broadcast it to all connections
-
 			for conn := range aconns {
 				_, _ = conn.Write([]byte(msg))
 			}
 		case dconn := <-dconns:
 			log.Printf("Client %v is gone", aconns[dconn])
-			// delete(aconns, dconn)
-
-
+			delete(aconns, dconn)
 		}
 	}
 
