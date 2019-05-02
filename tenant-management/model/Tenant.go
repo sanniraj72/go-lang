@@ -2,8 +2,8 @@ package model
 
 
 type Tenant struct {
-	propertyName string 	`json: "propertyName"`
-	tenantName   string		`json: "tenantName"`
-	tenantPh     string		`json: "tenantPh"`
-	tenantEmail  string		`json: "tenantEmail"`
+	PropertyName string 	`json: "propertyName"`
+	TenantName   string		`json: "tenantName"`
+	TenantPh     string		`json: "tenantPh"`
+	TenantEmail  string		`json: "tenantEmail"`
 }

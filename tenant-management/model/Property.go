@@ -2,8 +2,8 @@ package model
 
 
 type Property struct {
-	ownerEmail    string 	`json: "ownerEmail"`
-	propertyName  string 	`json: "propertyName"`
-	availableFlat int 		`json: "availableFlat"`
-	occupiedFlat  int 		`json: "occupiedFlat"`
+	OwnerEmail    string 	`json: "ownerEmail"`
+	PropertyName  string 	`json: "propertyName"`
+	AvailableFlat int 		`json: "availableFlat"`
+	OccupiedFlat  int 		`json: "occupiedFlat"`
 }
