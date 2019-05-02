@@ -1,31 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"tenant-management/model"
 )
 
-type Owner struct {
-	ownerName  string
-	ownerEmail string
-}
-
-//type Property struct {
-//	ownerEmail    string
-//	propertyName  string
-//	availableFlat int
-//	occupiedFlat  int
-//}
-//
-//type Tenant struct {
-//	propertyName string
-//	tenantName   string
-//	tenantPh     string
-//	tenantEmail  string
-//}
-
-var ownerList = make(map[string]Owner)
+var ownerList = make(map[string]model.Owner)
 //var propertyList = make(map[string]Property)
 //var tenantList = make(map[string]Tenant)
 
@@ -46,21 +30,24 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		var ownerName string
-		var ownerEmail string
+		data, err := ioutil.ReadAll(r.Body)
 
-		fmt.Println("Enter owner name:")
-		_, _ = fmt.Scanf("%s", ownerName)
-
-		fmt.Println("Enter owner email:")
-		_, _ = fmt.Scanf("%s", ownerEmail)
-
-		owner := Owner{
-			ownerName:  ownerName,
-			ownerEmail: ownerEmail,
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
 		}
 
-		ownerList[ownerEmail] = owner
-		fmt.Printf("Welcome %v", ownerName)
+		// Unmarshal
+		var owner model.Owner
+		errM := json.Unmarshal(data, &owner)
+
+		// save data
+		ownerList[owner.OwnerEmail] = owner
+
+		if errM != nil {
+			http.Error(w, errM.Error(), 500)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, "Welcome %s!", owner.OwnerName)
 	}
 }
